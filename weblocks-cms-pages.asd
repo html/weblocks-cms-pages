@@ -4,6 +4,7 @@
   :serial t
   :description "Static pages functionality for Weblocks CMS"
   :author "Olexiy Zamkoviy <olexiy.z@gmail.com>"
+  :version (:read-from-file "version.lisp-expr")
   :license "LLGPL"
   :depends-on (#:weblocks
                #:weblocks-cms 

@@ -160,9 +160,10 @@
   (let ((ret (or (slot-value obj 'weblocks::children)
                  #+l(setf (slot-value obj 'weblocks::children) 
                           (list (get-page-content (first-by-values 'weblocks-cms::page :path (or (slot-value obj 'selected) "/") :parent nil)))))))
-    ;(firephp:fb "Children of container" obj ret)
-    ret
-    ))
+    (loop for i in ret 
+          collect (if (listp i) 
+                    (second i)
+                    i))))
 
 (defmethod get-page-content-string ((obj weblocks-cms::template) children)
   (let ((template (alexandria:make-keyword (string-upcase (weblocks-cms::template-name obj)))))
