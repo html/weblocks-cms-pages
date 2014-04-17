@@ -16,4 +16,4 @@ It should be included into root widget.
 
 ## Compatibility
 
-Currently Weblocks CMS Pages works with weblocks-routes branch of https://github.com/html/weblocks repository
+Currently Weblocks CMS Pages works with `weblocks-routes` branch of https://github.com/html/weblocks repository
