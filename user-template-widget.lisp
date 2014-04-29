@@ -78,7 +78,7 @@
       (let ((template-obj (or 
                             (first-by-values 'weblocks-cms::template 
                                              :name (cons (string-downcase name) #'string=))
-                            (persist-object weblocks-stores:*default-store* 
+                            (weblocks:persist-object weblocks-stores:*default-store* 
                                             (make-instance 'weblocks-cms::template :name (string-downcase name))))))
         (eval 
           `(defun ,wt-symbol-name (&rest args)
