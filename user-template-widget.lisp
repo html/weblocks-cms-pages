@@ -82,11 +82,10 @@
                                             (make-instance 'weblocks-cms::template :name (string-downcase name))))))
         (eval 
           `(defun ,wt-symbol-name (&rest args)
-             (write-string 
-               (mustache:mustache-render-to-string 
-                 ,(slot-value template-obj 'weblocks-cms::text)
-                 (loop for (first second) on args by #'cddr
-                       collect (cons first second))))))
+             (mustache:mustache-render-to-string 
+               ,(slot-value template-obj 'weblocks-cms::text)
+               (loop for (first second) on args by #'cddr
+                     collect (cons first second)))))
         (prog1 
           (eval 
             `(apply 
