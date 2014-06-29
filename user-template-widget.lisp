@@ -69,6 +69,16 @@
                        ((subtypep (type-of (car value)) 'weblocks:widget) 
                         (list (car value)))))))))
 
+(defun get-variables-descriptions (args)
+  (yaclml:with-yaclml-output-to-string 
+    (loop for (first second . third) in (alexandria:plist-alist args)
+          do 
+          (<span 
+            (<:format "{{~A}}" (string-downcase first))
+            " - "
+            (<:as-is third))
+          (<br))))
+
 (defun render-user-template (name &rest args)
   (let ((wt-keyword (alexandria:make-keyword (string-upcase name)))
         (wt-symbol-name (intern (string-upcase name) *package*)))
@@ -95,14 +105,7 @@
                                  in (alexandria:plist-alist args)
                                  append (list first second))))))
           (setf (slot-value template-obj 'weblocks-cms::variables-descriptions)
-                (yaclml:with-yaclml-output-to-string 
-                  (loop for (first second . third) in (alexandria:plist-alist args)
-                        do 
-                        (<span 
-                          (<:format "{{~A}}" (string-downcase first))
-                          " - "
-                          (<:as-is third))
-                        (<br))))
+                (get-variables-descriptions args))
           (setf (slot-value template-obj 'weblocks-cms::last-used-time) (get-universal-time)))))))
 
 (defvar *template-widget-variables* nil)
