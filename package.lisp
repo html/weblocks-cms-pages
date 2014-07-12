@@ -18,7 +18,7 @@
 (in-package :weblocks-cms-pages)
 
 (weblocks-cms:def-additional-schema 
-  :template
+  :page
   `((:TITLE ,(translate "Site Page") :NAME :PAGE :FIELDS
      ((:TITLE ,(translate "Page Content") :NAME :CONTENT :TYPE :SINGLE-CHOICE :OPTIONS NIL)
       (:TITLE ,(translate "Site Path") :NAME :PATH :TYPE :STRING :OPTIONS NIL)
