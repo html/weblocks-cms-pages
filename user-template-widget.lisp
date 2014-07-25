@@ -73,11 +73,11 @@
   (yaclml:with-yaclml-output-to-string 
     (loop for (first second . third) in (alexandria:plist-alist args)
           do 
-          (<span 
+          (<:span 
             (<:format "{{~A}}" (string-downcase first))
             " - "
             (<:as-is third))
-          (<br))))
+          (<:br))))
 
 (defun render-user-template (name &rest args)
   (let ((wt-keyword (alexandria:make-keyword (string-upcase name)))
