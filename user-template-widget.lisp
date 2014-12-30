@@ -29,7 +29,11 @@
                                (getf variables key))))
       (loop for (key . value) on new-vars by #'cddr 
             append (unless (getf variables key)
-                     (cons key value))))))
+                     (cons key value)))
+      (list :tr (cons 
+                  (lambda (str)
+                    (weblocks::translate str))
+                  "Функция для перевода, текст {{#tr}}Text{{/tr}} будет пропущен через переводчик")))))
 
 (defmethod update-variables ((obj user-template-widget))
   (with-slots (template variables) obj 
@@ -80,14 +84,21 @@
           (<:br))))
 
 (defun render-user-template (name &rest args)
+  "Render either {name}-{current-language} template ('test-tpl-en', 'test-tpl-ru') 
+   or {name} template. If template does not exist, creates it and stores to database."
   (let ((wt-keyword (alexandria:make-keyword (string-upcase name)))
         (wt-symbol-name (intern (string-upcase name) *package*)))
     (weblocks-util:deftemplate wt-keyword wt-symbol-name)
     (weblocks-util::nested-html-part 
       (list :type :user-template :template-name name)
       (let ((template-obj (or 
+                            ; First searching locale file with '-en' suffix or other depending on current-locale
+                            (first-by-values 'weblocks-cms::template 
+                                             :name (cons (string-downcase (format nil "~A-~A" name weblocks::*current-locale*)) #'string=))
+                            ; Then searching for file itself without siffixes
                             (first-by-values 'weblocks-cms::template 
                                              :name (cons (string-downcase name) #'string=))
+                            ; Then creating if not found
                             (weblocks:persist-object weblocks-stores:*default-store* 
                                             (make-instance 'weblocks-cms::template :name (string-downcase name))))))
         (eval 
