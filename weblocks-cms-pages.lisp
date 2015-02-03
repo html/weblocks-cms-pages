@@ -115,6 +115,21 @@
   (:documentation "Widget that contains navigation stuff for pages functionality")
   (:default-initargs :uri-id :pages))
 
+(defun maybe-replace-with-other-lang-template (template)
+  (let ((other-lang-template 
+          (first-by-values 
+            'weblocks-cms::template 
+            :name 
+            (format nil "~A-~A" 
+                    (weblocks-cms::template-name template)
+                    (string-downcase (weblocks::current-locale))))))
+    (or other-lang-template template)))
+
+(defun page-content (page)
+  (if (typep (weblocks-cms::page-content page) 'weblocks-cms::template)
+    (maybe-replace-with-other-lang-template (weblocks-cms::page-content page))
+    (weblocks-cms::page-content page)))
+
 (defun get-page-content (page)
   (get-page-content-string 
     (weblocks-cms::page-content page)

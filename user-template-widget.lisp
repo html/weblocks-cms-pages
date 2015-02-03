@@ -94,7 +94,7 @@
       (let ((template-obj (or 
                             ; First searching locale file with '-en' suffix or other depending on current-locale
                             (first-by-values 'weblocks-cms::template 
-                                             :name (cons (string-downcase (format nil "~A-~A" name weblocks::*current-locale*)) #'string=))
+                                             :name (cons (string-downcase (format nil "~A-~A" name (weblocks::current-locale))) #'string=))
                             ; Then searching for file itself without siffixes
                             (first-by-values 'weblocks-cms::template 
                                              :name (cons (string-downcase name) #'string=))
@@ -133,7 +133,11 @@
 (defun append-default-variables (template vars)
   (append 
     (loop for (template-name variable-name variable-description callback) in *template-widget-variables* 
-          if (equal template-name template)
+          if (or 
+               (equal template-name template)
+               (progn 
+                 (string=  (string-downcase (format nil "~A-~A" template-name (weblocks::current-locale)))
+                           (string-downcase template))))
           append (list variable-name (cons (when callback (funcall callback)) variable-description)))
     vars))
 
