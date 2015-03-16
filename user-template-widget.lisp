@@ -104,7 +104,7 @@
         (eval 
           `(defun ,wt-symbol-name (&rest args)
              (mustache:render* 
-               ,(slot-value template-obj 'weblocks-cms::text)
+               ,(or (slot-value template-obj 'weblocks-cms::text) "")
                (loop for (first second) on args by #'cddr
                      collect (cons first second)))))
         (prog1 
