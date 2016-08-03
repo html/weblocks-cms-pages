@@ -153,7 +153,7 @@
   (make-routes-for-pages)
 
   (with-yaclml 
-    (<div :id (dom-id obj)
+    (<:div :id (dom-id obj)
           (with-slots (selected) obj
             (when (and (not selected) 
                        (not (first-by-values 'weblocks-cms::page :path "/"))) 
