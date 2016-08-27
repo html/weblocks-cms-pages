@@ -138,7 +138,11 @@
                (progn 
                  (string=  (string-downcase (format nil "~A-~A" template-name (weblocks::current-locale)))
                            (string-downcase template))))
-          append (list variable-name (cons (when callback (funcall callback)) variable-description)))
+          append (list variable-name 
+                       (cons 
+                         (when callback 
+                           (weblocks::timing (format nil "getting variable for template ~A ~A" template variable-name)
+                                             (funcall callback))) variable-description)))
     vars))
 
 (defun get-variable-description (template variable)

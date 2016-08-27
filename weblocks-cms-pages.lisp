@@ -131,9 +131,10 @@
     (weblocks-cms::page-content page)))
 
 (defun get-page-content (page)
-  (get-page-content-string 
-    (weblocks-cms::page-content page)
-    (weblocks-utils:find-by-values 'weblocks-cms::page :parent page)))
+  (weblocks::timing (format nil "content-item--~A" (slot-value page 'weblocks-cms::name))
+    (get-page-content-string 
+      (weblocks-cms::page-content page)
+      (weblocks-utils:find-by-values 'weblocks-cms::page :parent page))))
 
 (defun make-routes-for-pages ()
   "Connects routes to pages-container widget"
@@ -154,22 +155,22 @@
 
   (with-yaclml 
     (<:div :id (dom-id obj)
-          (with-slots (selected) obj
-            (when (and (not selected) 
-                       (not (first-by-values 'weblocks-cms::page :path "/"))) 
-              (return-from render-widget 
-                           (mapcar #'render-widget (widget-children obj))))
+           (with-slots (selected) obj
+             (when (and (not selected) 
+                        (not (first-by-values 'weblocks-cms::page :path "/"))) 
+               (return-from render-widget 
+                            (mapcar #'render-widget (widget-children obj))))
 
-            (let ((page (first-by-values 'weblocks-cms::page :path (or selected "/") :parent nil))
-                  (page-content))
-              (setf *current-page-title* (weblocks-cms::page-title page))
-              (setf page-content (get-page-content page))
-              (setf (slot-value obj 'weblocks::children) (list page-content))
-              (render-widget page-content))
-            (pushnew 
-              (lambda ()
-                (setf selected nil))
-              (request-hook :request :post-render))))))
+             (let ((page (first-by-values 'weblocks-cms::page :path (or selected "/") :parent nil))
+                   (page-content))
+               (setf *current-page-title* (weblocks-cms::page-title page))
+               (setf page-content (get-page-content page))
+               (setf (slot-value obj 'weblocks::children) (list page-content))
+               (render-widget page-content))
+             (pushnew 
+               (lambda ()
+                 (setf selected nil))
+               (request-hook :request :post-render))))))
 
 (defmethod widget-children ((obj pages-container) &optional type)
   (let ((ret (or (slot-value obj 'weblocks::children)
@@ -179,6 +180,13 @@
           collect (if (listp i) 
                     (second i)
                     i))))
+
+(defmethod get-page-content-string :around (obj children)
+  (weblocks::timing 
+    (if (subtypep (type-of obj) 'weblocks-cms::template)
+      (format nil "get content string from template ~A"  (weblocks-cms::template-name obj))
+      (format nil "get content string from ~A" (prin1-to-string obj)))
+    (call-next-method)))
 
 (defmethod get-page-content-string ((obj weblocks-cms::template) children)
   (let ((template (alexandria:make-keyword (string-upcase (weblocks-cms::template-name obj)))))
